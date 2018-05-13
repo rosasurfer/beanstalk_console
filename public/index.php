@@ -5,7 +5,7 @@
  * @link http://kr.github.com/beanstalkd/
  * @author Petr Trofimov, Sergey Lysenko
  */
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_DEPRECATED);
 ini_set('display_errors', 1);
 
 require_once dirname(__FILE__) . '/../config.php';
