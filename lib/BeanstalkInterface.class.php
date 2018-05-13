@@ -239,7 +239,17 @@ class BeanstalkInterface {
         }
 
         if (@$_COOKIE['isDisabledUnserialization'] != 1) {
+            $jsonDecodeEnabled = !@$_COOKIE['isDisabledJsonDecode'];
+
             $mixed = set_error_handler(array($this, 'exceptions_error_handler'));
+
+            if (strLen($pData) && $pData[0]=='"' && $jsonDecodeEnabled) {
+                try {
+                    $data = json_decode($pData);
+                    $pData = $data;                 // re-assign $pData on success only
+                } catch (Exception $e) {}
+            }
+
             try {
                 $data = unserialize($pData);
             } catch (Exception $e) {
@@ -259,7 +269,7 @@ class BeanstalkInterface {
             }
             if ($data) {
                 $this->_contentType = 'json';
-                //$out = $data;
+                //$out = $data;                     // decoded later in JavaScript
             }
         }
         return $out;
