@@ -227,7 +227,9 @@ class BeanstalkInterface {
         if (@$_COOKIE['isEnabledBase64Decode'] == 1) {
             $mixed = set_error_handler(array($this, 'exceptions_error_handler'));
             try {
-                $data = base64_decode($pData);
+                $data = base64_decode($pData, $strict=true);
+                if ($data === false)
+                    $data = $pData;
             } catch (Exception $e) {
                 $data = $e->getMessage();
             }
@@ -235,7 +237,7 @@ class BeanstalkInterface {
             // restore old error handler
             restore_error_handler();
         }
-        
+
         if (@$_COOKIE['isDisabledUnserialization'] != 1) {
             $mixed = set_error_handler(array($this, 'exceptions_error_handler'));
             try {
