@@ -22,3 +22,14 @@ $GLOBALS['config'] = array(
      */
     'version' => '1.7.8',
 );
+
+
+/**
+ * Load an existing global configuration.
+ *
+ * This is the place to load the auto-loader of a parent project and/or to configure global logging/error handling.
+ */
+$global_config = dirName(__FILE__).'/.global-config.php';
+if (is_file($global_config)) {
+    require($global_config);
+}
