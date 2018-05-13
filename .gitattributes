@@ -1,1 +1,7 @@
 cover/ export-ignore
+
+
+# enforce Unix line endings
+.gitattributes text eol=lf
+.gitignore     text eol=lf
+*.php          text eol=lf
