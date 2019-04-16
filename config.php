@@ -25,8 +25,8 @@ $GLOBALS['config'] = array(
 
 
 /**
- * Load an existing parent configuration. This is the place to load the auto-loader of the parent project to find classes
- * required for visualizing messages in queues.
+ * Load an existing parent configuration. This is the place to load the class loader of the parent project to find custom
+ * classes required for visualizing message queues.
  *
  * To prevent symbolic link issues on Windows the file format of ".parent-config.txt" is plain text with the first line
  * pointing to the parent project's PHP configuration file.
