@@ -36,8 +36,10 @@ if (is_file($filename = dirname(__FILE__).'/.parent-config.txt')) {
 
     if ($lines = file($filename, FILE_IGNORE_NEW_LINES)) {
         $parentConfig = trim(reset($lines));
-        if (is_file($parentConfig)) {
-            require($parentConfig);
+        if (!is_file($parentConfig)) {
+            echo 'parent config file not found: "'.$parentConfig.'"';
+            exit(1);
         }
+        require($parentConfig);
     }
 }
