@@ -25,11 +25,19 @@ $GLOBALS['config'] = array(
 
 
 /**
- * Load an existing global configuration.
+ * Load an existing parent configuration. This is the place to load the auto-loader of the parent project to find classes
+ * required for visualizing messages in queues.
  *
- * This is the place to load the auto-loader of a parent project and/or to configure global logging/error handling.
+ * To prevent symbolic link issues on Windows the file format of ".parent-config.txt" is plain text with the first line
+ * pointing to the parent project's PHP configuration file.
  */
-$global_config = dirName(__FILE__).'/.global-config.php';
-if (is_file($global_config)) {
-    require($global_config);
+if (is_file($filename = dirname(__FILE__).'/.parent-config.txt')) {
+    ini_set('auto_detect_line_endings', 1);
+
+    if ($lines = file($filename, FILE_IGNORE_NEW_LINES)) {
+        $parentConfig = trim(reset($lines));
+        if (is_file($parentConfig)) {
+            require($parentConfig);
+        }
+    }
 }
