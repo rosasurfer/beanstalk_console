@@ -28,10 +28,10 @@ $GLOBALS['config'] = array(
  * Load an existing parent configuration. This is the place to load the class loader of the parent project to find custom
  * classes required for visualizing message queues.
  *
- * To prevent symbolic link issues on Windows the file format of ".parent-config.txt" is plain text with the first line
- * pointing to the parent project's PHP configuration file.
+ * To prevent symbolic link issues on Windows the file format of ".parent-config" is plain text with the first line pointing
+ * to the parent project's PHP configuration file.
  */
-if (is_file($filename = dirname(__FILE__).'/.parent-config.txt')) {
+if (is_file($filename = dirname(__FILE__).'/.parent-config')) {
     ini_set('auto_detect_line_endings', 1);
 
     if ($lines = file($filename, FILE_IGNORE_NEW_LINES)) {
