@@ -240,9 +240,9 @@ class Console {
         }
         try {
             $storage = new Storage($GLOBALS['config']['storage']);
-        } catch (Exception $ex) {
-            $this->_errors[] = $ex->getMessage();
         }
+        catch (Throwable $ex) { $this->_errors[] = $ex->getMessage(); }
+        catch (Exception $ex) { $this->_errors[] = $ex->getMessage(); }
     }
 
     public function getErrors() {
@@ -273,24 +273,22 @@ class Console {
                                 $this->_errors[] = 'Cannot delete Delayed until there are Ready messages on this tube';
                                 return;
                             }
-                        } catch (Exception $e) {
-                            // there might be no jobs to peek at, and peekReady raises exception in this situation
-                            if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) {
-                                throw $e;
-                            }
                         }
+                        // there might be no jobs to peek at, and peekReady raises exception in this situation
+                        catch (Throwable $e) { if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) throw $e; }
+                        catch (Exception $e) { if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) throw $e; }
+
                         try {
                             $bury = $this->interface->_client->useTube($tube)->peekBuried();
                             if ($bury) {
                                 $this->_errors[] = 'Cannot delete Delayed until there are Bury messages on this tube';
                                 return;
                             }
-                        } catch (Exception $e) {
-                            // there might be no jobs to peek at, and peekReady raises exception in this situation
-                            if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) {
-                                throw $e;
-                            }
                         }
+                        // there might be no jobs to peek at, and peekReady raises exception in this situation
+                        catch (Throwable $e) { if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) throw $e; }
+                        catch (Exception $e) { if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) throw $e; }
+
                         $job = $this->interface->_client->useTube($tube)->peekDelayed();
                         if ($job) {
                             //when we found job with Delayed, kick all messages, to be ready, so that we can Delete them.
@@ -309,13 +307,10 @@ class Console {
                     set_time_limit(5);
                 }
             } while (!empty($job));
-        } catch (Exception $e) {
-            // there might be no jobs to peek at, and peekReady raises exception in this situation
-            // skip not found exception
-            if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) {
-                $this->_errors[] = $e->getMessage();
-            }
         }
+        // there might be no jobs to peek at, and peekReady raises exception in this situation; skip not found exception
+        catch (Throwable $e) { if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) $this->_errors[] = $e->getMessage(); }
+        catch (Exception $e) { if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) $this->_errors[] = $e->getMessage(); }
     }
 
     protected function _main() {
@@ -357,9 +352,9 @@ class Console {
             if (strpos($e->getMessage(), Pheanstalk_Response::RESPONSE_NOT_FOUND) === false) {
                 $this->_errors[] = $e->getMessage();
             }
-        } catch (Exception $e) {
-            $this->_errors[] = $e->getMessage();
         }
+        catch (Throwable $e) { $this->_errors[] = $e->getMessage(); }
+        catch (Exception $e) { $this->_errors[] = $e->getMessage(); }
     }
 
     protected function _actionKick() {
@@ -506,11 +501,12 @@ class Console {
                 } else {
                     $error = 'Invalid state option';
                 }
-            } catch (Exception $e) {
-                // there might be no jobs to peek at, and peekReady raises exception in this situation
-                $error = $e->getMessage();
             }
-        } else {
+            // there might be no jobs to peek at, and peekReady raises exception in this situation
+            catch (Throwable $e) { $error = $e->getMessage(); }
+            catch (Exception $e) { $error = $e->getMessage(); }
+        }
+        else {
             $error = 'Required fields are not set';
         }
         echo json_encode($response);
@@ -586,9 +582,9 @@ class Console {
                     if (is_array($tubes)) {
                         $serverTubes[$server] = $tubes;
                     }
-                } catch (Exception $e) {
-                    
                 }
+                catch (Throwable $e) {}
+                catch (Exception $e) {}
             }
         }
         if (empty($serverTubes)) {
@@ -630,9 +626,9 @@ class Console {
                     if (is_array($tubes)) {
                         $serverTubes[$server] = $tubes;
                     }
-                } catch (Exception $e) {
-                    
                 }
+                catch (Throwable $e) {}
+                catch (Exception $e) {}
             }
         }
         if (empty($serverTubes)) {
@@ -711,9 +707,9 @@ class Console {
                     $totalJobs = $total[5]['value'];
                     break;
             }
-        } catch (Exception $e) {
-            
         }
+        catch (Throwable $e) {}
+        catch (Exception $e) {}
 
         if ($job === null)
             return $jobList;
@@ -730,7 +726,7 @@ class Console {
                     $added++;
                 }
             } catch (Pheanstalk_Exception_ServerException $e) {
-                
+
             }
             if ($added >= $limit || (microtime(true) - $this->actionTimeStart) > $limit) {
                 break;
@@ -783,9 +779,11 @@ class Console {
                     set_time_limit(5);
                 }
             } while (!empty($job));
-        } catch (Exception $e) {
-            // there might be no jobs to peek at, and peekReady raises exception in this situation
         }
+        // there might be no jobs to peek at, and peekReady raises exception in this situation
+        catch (Throwable $e) {}
+        catch (Exception $e) {}
+
         header(sprintf('Location: ./?server=%s&tube=%s', $server, urlencode($destTube)));
     }
 
@@ -812,9 +810,11 @@ class Console {
                     set_time_limit(5);
                 }
             } while (!empty($job));
-        } catch (Exception $e) {
-            // there might be no jobs to peek at, and peekReady raises exception in this situation
         }
+        // there might be no jobs to peek at, and peekReady raises exception in this situation
+        catch (Throwable $e) {}
+        catch (Exception $e) {}
+
         header(sprintf('Location: ./?server=%s&tube=%s', $server, urlencode($tube)));
     }
 

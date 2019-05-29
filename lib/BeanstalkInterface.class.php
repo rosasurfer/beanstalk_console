@@ -210,9 +210,10 @@ class BeanstalkInterface {
                 'id' => $job->getId(),
                 'data' => $job->getData(),
                 'stats' => $this->_client->statsJob($job));
-        } catch (Exception $ex) {
-            $peek = array();
         }
+        catch (Throwable $ex) { $peek = array(); }
+        catch (Exception $ex) { $peek = array(); }
+
         if ($peek) {
             $peek['data'] = $this->_decodeDate($peek['data']);
         }
@@ -230,9 +231,10 @@ class BeanstalkInterface {
                 $data = base64_decode($pData, $strict=true);
                 if ($data === false)
                     $data = $pData;
-            } catch (Exception $e) {
-                $data = $e->getMessage();
             }
+            catch (Throwable $e) { $data = $e->getMessage(); }
+            catch (Exception $e) { $data = $e->getMessage(); }
+
             ob_get_clean();
             // restore old error handler
             restore_error_handler();
@@ -247,14 +249,17 @@ class BeanstalkInterface {
                 try {
                     $data = json_decode($pData);
                     $pData = $data;                 // re-assign $pData on success only
-                } catch (Exception $e) {}
+                }
+                catch (Throwable $e) {}
+                catch (Exception $e) {}
             }
 
             try {
                 $data = unserialize($pData);
-            } catch (Exception $e) {
-                $data = $e->getMessage();
             }
+            catch (Throwable $e) { $data = $e->getMessage(); }
+            catch (Exception $e) { $data = $e->getMessage(); }
+
             ob_get_clean();
             // restore old error handler
             restore_error_handler();
